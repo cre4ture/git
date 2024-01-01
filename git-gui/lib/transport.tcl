@@ -229,7 +229,7 @@ proc do_push_anywhere {} {
 
 	set push_url {}
 	set push_force 0
-	set upstream_config = 1
+	set upstream_config 1
 	set push_thin 0
 	set push_tags 0
 
