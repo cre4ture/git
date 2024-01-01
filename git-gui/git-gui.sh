@@ -3395,6 +3395,10 @@ if {![is_enabled nocommit]} {
 	${NS}::button .vpane.lower.commarea.buttons.push -text [mc Push] \
 		-command do_push_anywhere
 	pack .vpane.lower.commarea.buttons.push -side top -fill x
+
+	${NS}::button .vpane.lower.commarea.buttons.difftool -text [mc Run difftool] \
+		-command do_push_anywhere
+	pack .vpane.lower.commarea.buttons.difftool -side top -fill x
 }
 
 # -- Commit Message Buffer
@@ -3704,6 +3708,11 @@ $ctxm add command \
 	-command {undo_last_revert; do_rescan}
 set ui_diff_undorevert [$ctxm index last]
 lappend diff_actions [list $ctxm entryconf $ui_diff_undorevert -state]
+$ctxm add command \
+	-label [mc "Run difftool"] \
+	-command {run_difftool; do_rescan}
+set ui_diff_run_difftool [$ctxm index last]
+lappend diff_actions [list $ctxm entryconf $ui_diff_run_difftool -state]
 $ctxm add separator
 $ctxm add command \
 	-label [mc "Show Less Context"] \
@@ -3798,6 +3807,7 @@ proc popup_diff_menu {ctxm ctxmmg ctxmsm x y X Y} {
 	} else {
 		set has_range [expr {[$::ui_diff tag nextrange sel 0.0] != {}}]
 		set u [mc "Undo Last Revert"]
+		set d [mc "Run difftool for file"]
 		if {$::ui_index eq $::current_diff_side} {
 			set l [mc "Unstage Hunk From Commit"]
 			set h [mc "Revert Hunk"]
@@ -3857,6 +3867,8 @@ proc popup_diff_menu {ctxm ctxmmg ctxmsm x y X Y} {
 			-label $h
 		$ctxm entryconf $::ui_diff_undorevert -state $undo_state \
 			-label $u
+		$ctxm entryconf $::ui_diff_run_difftool -state normal \
+			-label $d
 
 		tk_popup $ctxm $X $Y
 	}

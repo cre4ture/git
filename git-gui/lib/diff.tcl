@@ -903,3 +903,19 @@ proc undo_last_revert {} {
 
 	unlock_index
 }
+
+# TODO: update !Undo the last line/hunk reverted. When hunks and lines are reverted, a copy
+# of the diff applied is saved. Re-apply that diff to undo the revert.
+#
+# Right now, we only use a single variable to hold the copy, and not a
+# stack/deque for simplicity, so multiple undos are not possible. Maybe this
+# can be added if the need for something like this is felt in the future.
+proc run_difftool {} {
+	global current_diff_path current_diff_header
+
+	if {[catch {set fd [eval git difftool -y $current_diff_path]} err]} {
+		ui_status [mc "Unable to start difftool for file: %s" [escape_path $current_diff_path]]
+		error_popup [strcat [mc "Error starting difftool:"] "\n\n$err"]
+		return
+	}
+}
