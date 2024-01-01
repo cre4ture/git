@@ -3395,10 +3395,6 @@ if {![is_enabled nocommit]} {
 	${NS}::button .vpane.lower.commarea.buttons.push -text [mc Push] \
 		-command do_push_anywhere
 	pack .vpane.lower.commarea.buttons.push -side top -fill x
-
-	${NS}::button .vpane.lower.commarea.buttons.difftool -text [mc Run difftool] \
-		-command do_push_anywhere
-	pack .vpane.lower.commarea.buttons.difftool -side top -fill x
 }
 
 # -- Commit Message Buffer
