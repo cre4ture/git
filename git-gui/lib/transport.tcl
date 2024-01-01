@@ -213,9 +213,9 @@ proc do_push_anywhere {} {
 		-variable push_force
 	grid $w.options.force -columnspan 2 -sticky w
 	${NS}::checkbutton $w.options.upstream_config \
-		-text [mc "set selected remote and branch as remote tracking branch"] \
+		-text [mc "Set selected remote and branch as upstream"] \
 		-variable upstream_config
-	grid $w.options.force -columnspan 2 -sticky w
+	grid $w.options.upstream_config -columnspan 2 -sticky w
 	${NS}::checkbutton $w.options.thin \
 		-text [mc "Use thin pack (for slow network connections)"] \
 		-variable push_thin
