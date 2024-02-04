@@ -2716,6 +2716,7 @@ proc makewindow {} {
         {mc "Check out this branch" command cobranch}
         {mc "Rename this branch" command mvbranch}
         {mc "Remove this branch" command rmbranch}
+        {mc "Set tracking branch to this" command trkbranch}
         {mc "Copy branch name" command {clipboard clear; clipboard append $headmenuhead}}
     }
     $headctxmenu configure -tearoff 0
@@ -9944,18 +9945,18 @@ proc headmenu {x y id head} {
     stopfinding
     set headmenuid $id
     set headmenuhead $head
-    array set state {0 normal 1 normal 2 normal}
+    array set state {0 normal 1 normal 2 normal 3 disabled}
     if {[string match "remotes/*" $head]} {
         set localhead [string range $head [expr [string last / $head] + 1] end]
         if {[info exists headids($localhead)]} {
             set state(0) disabled
         }
-        array set state {1 disabled 2 disabled}
+        array set state {1 disabled 2 disabled 3 normal}
     }
     if {$head eq $mainhead} {
         array set state {0 disabled 2 disabled}
     }
-    foreach i {0 1 2} {
+    foreach i {0 1 2 3} {
         $headctxmenu entryconfigure $i -state $state($i)
     }
     tk_popup $headctxmenu $x $y
@@ -10009,6 +10010,29 @@ proc cobranch {} {
         }
     } else {
         filerun $fd [list readcheckoutstat $fd $newhead $headmenuid]
+    }
+}
+
+proc trkbranch {} {
+    global headmenuid headmenuhead headids
+    global showlocalchanges
+
+    set new_trk_head $headmenuhead
+    set command [list | git branch --set-upstream-to=$new_trk_head]
+    lappend command 2>@1
+    nowbusy checkout [mc "Checking out"]
+    update
+    dohidelocalchanges
+    if {[catch {
+        set fd [open $command r]
+    } err]} {
+        notbusy checkout
+        error_popup $err
+        if {$showlocalchanges} {
+            dodiffindex
+        }
+    } else {
+        notbusy checkout
     }
 }
 
